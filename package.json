@@ -8,8 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@xendora/react-timer": "^1.1.0",
     "next": "^9.3.3",
     "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react-dom": "^16.13.0",
+    "react-typist": "^2.0.5"
   }
 }

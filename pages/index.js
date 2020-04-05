@@ -1,5 +1,7 @@
 import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
+import Typist from 'react-typist';
+import ReactTimer from '@xendora/react-timer';
 
 const FORBIDDEN_STRINGS = [
   'corona',
@@ -20,10 +22,16 @@ function beep() {
   );
   snd.play();
 }
+
+const MAIN_COLOR = `#eb2100`;
+const BLACK = `#000000`;
+
 const Home = () => {
   const [recognitionOn, setRecognitionOn] = useState(false);
   const recognitionRef = useRef();
   const recognitionListRef = useRef();
+  const [detectedString, setDetectedString] = useState(' ');
+  const [someInfo, setSomeInfo] = useState(null);
 
   useEffect(() => {
     window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
@@ -58,39 +66,9 @@ const Home = () => {
       recognitionRef.current.continuous = true;
       recognitionRef.current.lang = 'en-US';
       recognitionRef.current.onresult = (event) => {
-        console.log('stopped');
-        let interimTranscript = '';
         for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
-          interimTranscript += event.results[i][0].transcript;
-          // if (event.results[i].isFinal) {
-          //   finalTranscript += transcript;
-          // } else {
-          //   interimTranscript += transcript;
-          // }
-          FORBIDDEN_STRINGS.forEach((forbiddenWord) => {
-            if (interimTranscript.includes(forbiddenWord)) {
-              beep();
-              beep();
-              beep();
-              beep();
-              beep();
-              beep();
-              beep();
-              beep();
-              interimTranscript = '';
-            }
-          });
-          console.log(interimTranscript);
-          // console.log(typeof interimTranscript);
-
-          // console.log(event.results[i]);
-          // console.log(Object.keys(event.results[i]));
-          // event.results[i].forEach((element) => {
-          //   console.log(element);
-          // });
+          setDetectedString((prev) => `${prev} ${event.results[i][0].transcript}`);
         }
-
-        // console.log(finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</>');
       };
     }
   }, [recognitionRef.current]);
@@ -110,13 +88,33 @@ const Home = () => {
       ];
       var grammar = '#JSGF V1.0; grammar colors; public <color> = ' + colors.join(' | ') + ' ;';
       recognitionListRef.current.addFromString(grammar, 1);
+      recognitionRef.current.grammars = recognitionListRef.current;
     }
   }, [recognitionRef.current, recognitionListRef.current]);
+
+  useEffect(() => {
+    if (detectedString) {
+      console.log(detectedString);
+      FORBIDDEN_STRINGS.forEach((forbiddenWord) => {
+        if (detectedString.includes(forbiddenWord)) {
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          setDetectedString('');
+        }
+      });
+    }
+  }, [detectedString]);
 
   return (
     <div className='container'>
       <Head>
-        <title>COVIDMute</title>
+        <title>COVIDCensor</title>
         <link rel='icon' href='/favicon.ico' />
         <link
           rel='stylesheet'
@@ -125,48 +123,86 @@ const Home = () => {
       </Head>
 
       <main>
-        <h1 className='title'>
-          COVID
-          <a href='https://github.com/m3h0w/COVIDMute' target='_blank'>
-            Mute
-          </a>
-        </h1>
+        <div className='title-container'>
+          {someInfo && someInfo !== ' ' && (
+            <Typist
+              avgTypingDelay={50}
+              cursor={{
+                show: false,
+                blink: true,
+                element: '*',
+                hideWhenDone: false,
+              }}
+            >
+              <p>{someInfo}</p>
+            </Typist>
+          )}
+          {someInfo === ' ' && (
+            <p
+              className='info-button'
+              onClick={() => {
+                const info = `Not so evil, really. It's just that some domain providers right now don't allow domain names that mention covid.`;
+                setSomeInfo(info);
+                setTimeout(() => {
+                  setSomeInfo(' ');
+                }, info.length * 200);
+              }}
+            >
+              *
+            </p>
+          )}
+        </div>
+        <Typist
+          cursor={{
+            show: false,
+          }}
+          onTypingDone={() => {
+            setSomeInfo(' ');
+          }}
+        >
+          <div className='title-container'>
+            <h1 className='title'>
+              <a href='https://github.com/m3h0w/COVIDCensor' target='_blank'>
+                rosnec
+              </a>
+              divoc.live
+            </h1>
+            <Typist.Delay ms={800} />
+            <h1 className='title-space'>&nbsp;|&nbsp;</h1>
+            <h1 className='title'>
+              evil.covid
+              <a href='https://github.com/m3h0w/COVIDCensor' target='_blank'>
+                censor
+              </a>
+            </h1>
+          </div>
+        </Typist>
 
-        <p className='description'>Keep the pandemic out of the conversation.</p>
+        <p className='description'>Take a break and keep the pandemic out of the conversation. For a minute.</p>
 
         <div className='grid'>
           <button
-            className='card'
+            className={`card${recognitionOn ? ' card-playing' : ''}`}
             onClick={() => {
               setRecognitionOn((prev) => !prev);
             }}
           >
-            <h3>{!recognitionOn ? `Mute ►` : `Listening... ⏸`}</h3>
-            {/* <p>Find in-depth information about Next.js features and API.</p> */}
+            <h3>{!recognitionOn ? `Censor ▶️` : `😈 Listening... ⏸`}</h3>
           </button>
-          {/* 
-        <a href="https://nextjs.org/learn" className="card">
-          <h3>Learn &rarr;</h3>
-          <p>Learn about Next.js in an interactive course with quizzes!</p>
-        </a>
-
-        <a
-          href="https://github.com/zeit/next.js/tree/master/examples"
-          className="card"
-        >
-          <h3>Examples &rarr;</h3>
-          <p>Discover and deploy boilerplate example Next.js projects.</p>
-        </a>
-
-        <a
-          href="https://zeit.co/new?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          className="card"
-        >
-          <h3>Deploy &rarr;</h3>
-          <p>
-            Instantly deploy your Next.js site to a public URL with ZEIT Now.
-          </p>
-        </a> */}
+        </div>
+        <div className='timer-container'>
+          <h1>
+            {recognitionOn && (
+              <ReactTimer
+                start={60}
+                end={(value) => value === 0}
+                onEnd={(value) => setRecognitionOn(false)}
+                onTick={(value) => value - 1}
+              >
+                {(time) => <div>{time}</div>}
+              </ReactTimer>
+            )}
+          </h1>
         </div>
       </main>
 
@@ -178,6 +214,16 @@ const Home = () => {
       </footer>
 
       <style jsx>{`
+        h1,
+        p {
+          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans,
+            Droid Sans, Helvetica Neue, sans-serif;
+        }
+
+        .Typist > p {
+          margin: 0;
+        }
+
         .container {
           min-height: 100vh;
           padding: 0 0.5rem;
@@ -185,6 +231,25 @@ const Home = () => {
           flex-direction: column;
           justify-content: center;
           align-items: center;
+        }
+
+        .info-button {
+          border: 1px solid #ccc;
+          border-radius: 50%;
+          width: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0;
+          cursor: pointer;
+          margin-bottom: -10px;
+        }
+
+        .info-button:hover {
+          border: 1px solid ${MAIN_COLOR};
+          border-radius: 45%;
+          color: ${MAIN_COLOR};
+          font-weight: 900;
         }
 
         main {
@@ -213,7 +278,7 @@ const Home = () => {
           display: flex;
           justify-content: center;
           align-items: center;
-          color: #0070f3;
+          color: ${MAIN_COLOR};
         }
 
         a {
@@ -221,8 +286,22 @@ const Home = () => {
           text-decoration: none;
         }
 
+        .title-container {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          min-width: 50px;
+          min-height: 30px;
+        }
+
+        .title-space {
+          font-weight: 100;
+          font-size: 50px;
+        }
+
         .title a {
-          color: #0070f3;
+          color: ${MAIN_COLOR};
           text-decoration: none;
         }
 
@@ -232,7 +311,8 @@ const Home = () => {
           text-decoration: underline;
         }
 
-        .title {
+        .title,
+        .title-space {
           margin: 0;
           line-height: 1.15;
           font-size: 4rem;
@@ -280,15 +360,22 @@ const Home = () => {
           text-decoration: none;
           border: 1px solid #eaeaea;
           border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
+          transition: 0.5s;
         }
 
-        .card:hover,
+        .card:hover {
+          color: ${MAIN_COLOR};
+          cursor: pointer;
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
         .card:focus,
         .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-          cursor: pointer;
+          outline: none;
+        }
+
+        .card-playing {
+          color: ${MAIN_COLOR};
         }
 
         .card h3 {
