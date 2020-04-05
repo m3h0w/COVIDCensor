@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
 import Typist from 'react-typist';
 import ReactTimer from '@xendora/react-timer';
+import TypistLoop from 'react-typist-loop';
 
 const FORBIDDEN_STRINGS = [
   'corona',
@@ -129,9 +130,11 @@ const Home = () => {
               avgTypingDelay={50}
               cursor={{
                 show: false,
-                blink: true,
-                element: '*',
-                hideWhenDone: false,
+              }}
+              onTypingDone={() => {
+                setTimeout(() => {
+                  setSomeInfo(' ');
+                }, someInfo.length * 5);
               }}
             >
               <p>{someInfo}</p>
@@ -143,12 +146,9 @@ const Home = () => {
               onClick={() => {
                 const info = `Not so evil, really. It's just that some domain providers right now don't allow domain names that mention covid.`;
                 setSomeInfo(info);
-                setTimeout(() => {
-                  setSomeInfo(' ');
-                }, info.length * 200);
               }}
             >
-              *
+              i
             </p>
           )}
         </div>
@@ -190,20 +190,37 @@ const Home = () => {
             <h3>{!recognitionOn ? `Censor ▶️` : `😈 Listening... ⏸`}</h3>
           </button>
         </div>
-        <div className='timer-container'>
-          <h1>
-            {recognitionOn && (
+        {recognitionOn && (
+          <div className='timer-container'>
+            <h1>
               <ReactTimer
                 start={60}
                 end={(value) => value === 0}
                 onEnd={(value) => setRecognitionOn(false)}
                 onTick={(value) => value - 1}
               >
-                {(time) => <div>{time}</div>}
+                {(time) => <div style={{ textAlign: 'center' }}>{time}</div>}
               </ReactTimer>
-            )}
-          </h1>
-        </div>
+            </h1>
+
+            <p style={{ display: 'flex' }}>
+              Deep breaths. You can do it
+              <TypistLoop interval={500}>
+                {['.', '..', '...'].map((text) => (
+                  <Typist
+                    key={text}
+                    startDelay={0}
+                    cursor={{
+                      show: false,
+                    }}
+                  >
+                    {text}
+                  </Typist>
+                ))}
+              </TypistLoop>
+            </p>
+          </div>
+        )}
       </main>
 
       <footer>
@@ -215,6 +232,7 @@ const Home = () => {
 
       <style jsx>{`
         h1,
+        h4,
         p {
           font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans,
             Droid Sans, Helvetica Neue, sans-serif;
@@ -226,7 +244,7 @@ const Home = () => {
 
         .container {
           min-height: 100vh;
-          padding: 0 0.5rem;
+          padding: 0 0.3rem;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -250,6 +268,11 @@ const Home = () => {
           border-radius: 45%;
           color: ${MAIN_COLOR};
           font-weight: 900;
+        }
+
+        .timer-container {
+          display: 'flex';
+          justify-content: 'center';
         }
 
         main {

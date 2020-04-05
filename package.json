@@ -12,6 +12,7 @@
     "next": "^9.3.3",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "react-typist": "^2.0.5"
+    "react-typist": "^2.0.5",
+    "react-typist-loop": "0.0.5"
   }
 }
