@@ -276,7 +276,7 @@ const Home = () => {
         }
 
         main {
-          padding: 5rem 0;
+          padding: 2rem 0;
           flex: 1;
           display: flex;
           flex-direction: column;
@@ -349,6 +349,19 @@ const Home = () => {
         .description {
           line-height: 1.5;
           font-size: 1.5rem;
+        }
+
+        @media only screen and (max-width: 600px) {
+          .title,
+          .title-space {
+            margin: 0;
+            line-height: 1.15;
+            font-size: 1.2rem;
+          }
+
+          .description {
+            font-size: 0.9rem;
+          }
         }
 
         code {
