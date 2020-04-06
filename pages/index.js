@@ -2,7 +2,6 @@ import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
 import Typist from 'react-typist';
 import ReactTimer from '@xendora/react-timer';
-import TypistLoop from 'react-typist-loop';
 import GA from '../utils/googleAnalytics';
 import { useRouter } from 'next/router';
 
@@ -12,18 +11,19 @@ const FORBIDDEN_STRINGS = [
   'epidemic',
   'virus',
   'demic',
-  'epi',
-  'rona',
-  'demic',
   'infection',
   'infect',
   'flu',
   'bat',
   'cancelled',
   'nineteen',
+  '19',
+  '1919',
   'covid',
   'ovid',
   'vid',
+  'wuhan',
+  'han',
 ];
 function beep() {
   var snd = new Audio(
@@ -99,7 +99,7 @@ const Home = () => {
   useEffect(() => {
     if (recognitionRef.current) {
       recognitionRef.current.interimResults = true;
-      recognitionRef.current.maxAlternatives = 10;
+      recognitionRef.current.maxAlternatives = 3;
       recognitionRef.current.continuous = true;
       recognitionRef.current.lang = 'en-US';
       recognitionRef.current.onresult = (event) => {
@@ -134,7 +134,20 @@ const Home = () => {
     if (detectedString) {
       console.log(detectedString);
       FORBIDDEN_STRINGS.forEach((forbiddenWord) => {
-        if (detectedString.includes(forbiddenWord)) {
+        if (
+          detectedString
+            .split(' ')
+            .map((v) => v.replace(' ', ''))
+            .includes(forbiddenWord)
+        ) {
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
           beep();
           beep();
           beep();
