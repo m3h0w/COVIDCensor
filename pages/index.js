@@ -45,6 +45,9 @@ const Home = () => {
   const router = useRouter();
 
   useEffect(() => {
+    if (!GA.initialized) {
+      GA.init();
+    }
     GA.pageView();
   }, [router.route]);
 
