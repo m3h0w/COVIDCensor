@@ -2,12 +2,12 @@ import ReactGA from 'react-ga';
 
 const TRACKING_ID = 'UA-129359323-3';
 
-const initialized = false;
+let _initialized = false;
 
-const init = () => {
+function init() {
   ReactGA.initialize(TRACKING_ID);
-  initialized = true;
-};
+  _initialized = true;
+}
 
 const pageView = () => {
   ReactGA.pageview(window.location.pathname + window.location.search);
@@ -17,9 +17,13 @@ const setUser = (userId) => {
   ReactGA.set({ userId });
 };
 
+function isInitialized() {
+  return _initialized;
+}
+
 export default {
   init,
   pageView,
   setUser,
-  initialized,
+  isInitialized,
 };
