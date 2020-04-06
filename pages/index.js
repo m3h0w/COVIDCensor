@@ -160,7 +160,7 @@ const Home = () => {
             <p
               className='info-button'
               onClick={() => {
-                const info = `Not so evil, really. It's just that some domain providers right now don't allow domain names that mention covid.`;
+                const info = `Not so evil, really. It's just that some domain providers right now don't allow domain names that mention covid and this one made sense in reverse.`;
                 setSomeInfo(info);
               }}
             >
@@ -222,23 +222,6 @@ const Home = () => {
                 {(time) => <div style={{ textAlign: 'center' }}>{time}</div>}
               </ReactTimer>
             </h1>
-
-            <p style={{ display: 'flex' }}>
-              Deep breaths. You can do it
-              <TypistLoop interval={500}>
-                {['.', '..', '...'].map((text) => (
-                  <Typist
-                    key={text}
-                    startDelay={0}
-                    cursor={{
-                      show: false,
-                    }}
-                  >
-                    {text}
-                  </Typist>
-                ))}
-              </TypistLoop>
-            </p>
           </div>
         )}
       </main>
