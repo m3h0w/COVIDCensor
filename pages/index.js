@@ -58,7 +58,8 @@ const Home = () => {
       console.log('speech rec supported');
     } else {
       console.error('speech rec not supported');
-      setError('Speech recognition is not supported in your browser. Try the newest Chrome.');
+      setError('Speech recognition is not supported in your browser. Try Chrome instead.');
+      return;
     }
 
     navigator.permissions.query({ name: 'microphone' }).then(function (permissionStatus) {
