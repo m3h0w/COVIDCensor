@@ -160,7 +160,7 @@ const Home = () => {
             <p
               className='info-button'
               onClick={() => {
-                const info = `Not so evil, really. It's just that some domain providers right now don't allow domain names that mention covid and this one made sense in reverse.`;
+                const info = `Not so evil, really. It's just that some domain providers right now don't allow domain names that mention covid and this one made sense in reverse. Also, turn on the sound.`;
                 setSomeInfo(info);
               }}
             >
@@ -195,6 +195,7 @@ const Home = () => {
         </Typist>
 
         <p className='description'>Take a break and keep the pandemic out of the conversation. For a minute.</p>
+        {/* <p className='sub-description'>(This website makes sounds)</p> */}
 
         {!error ? (
           <div className='grid'>
@@ -354,6 +355,13 @@ const Home = () => {
           font-size: 1.5rem;
         }
 
+        .sub-description {
+          margin: 0;
+          margin-top: -20px;
+          line-height: 1.3;
+          font-size: 1rem;
+        }
+
         @media only screen and (max-width: 600px) {
           .title,
           .title-space {
@@ -364,6 +372,11 @@ const Home = () => {
 
           .description {
             font-size: 0.9rem;
+          }
+
+          .sub-description {
+            margin-top: 0;
+            font-size: 0.7rem;
           }
         }
 
