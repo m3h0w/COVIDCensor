@@ -125,7 +125,13 @@ const Home = () => {
   return (
     <div className='container'>
       <Head>
-        <title>COVIDCensor</title>
+        <title>Evil Covid Censor</title>
+        <meta name='description' content='Take a break and keep the pandemic out of the conversation. For a minute.' />
+        {/* <meta property="og:image" content="%PUBLIC_URL%/logo200.png" /> */}
+        <meta
+          property='og:description'
+          content='Take a break and keep the pandemic out of the conversation. For a minute.'
+        />
         <link rel='icon' href='/favicon.ico' />
         <link
           rel='stylesheet'
