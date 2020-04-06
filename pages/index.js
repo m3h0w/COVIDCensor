@@ -22,6 +22,8 @@ const FORBIDDEN_STRINGS = [
   'cancelled',
   'nineteen',
   'covid',
+  'ovid',
+  'vid',
 ];
 function beep() {
   var snd = new Audio(
@@ -58,6 +60,26 @@ const Home = () => {
       console.error('speech rec not supported');
       setError('Speech recognition is not supported in your browser. Try the newest Chrome.');
     }
+
+    navigator.permissions.query({ name: 'microphone' }).then(function (permissionStatus) {
+      if (permissionStatus.state === 'denied') {
+        setError(
+          `Microphone permission denied. Can't censor without it :( To give access, click on the icon next to the website url in your browser and select 'allow' next to the microphone.`
+        );
+      }
+
+      permissionStatus.onchange = function () {
+        if (permissionStatus.state === 'denied') {
+          setError(
+            `Microphone permission denied. Can't censor without it :( To give access, click on the icon next to the website url in your browser and select 'allow' next to the microphone.`
+          );
+        }
+        if (permissionStatus.state === 'granted') {
+          setError(null);
+        }
+      };
+    });
+
     recognitionRef.current = new window.SpeechRecognition();
     recognitionListRef.current = new window.SpeechGrammarList();
   }, []);
@@ -213,7 +235,7 @@ const Home = () => {
             </button>
           </div>
         ) : (
-          <div style={{ color: '#ff0000' }}>{error}</div>
+          <div style={{ color: '#ff0000', fontSize: '0.7rem', width: '80%', textAlign: 'center' }}>{error}</div>
         )}
         {recognitionOn && (
           <div className='timer-container'>
