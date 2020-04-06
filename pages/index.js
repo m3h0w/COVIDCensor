@@ -53,50 +53,51 @@ const Home = () => {
 
   useEffect(() => {
     GA.init();
-    window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-    window.SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
     window.SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 
     if ('SpeechRecognition' in window) {
       console.log('speech rec supported');
+      recognitionRef.current = new SpeechRecognition();
+      recognitionListRef.current = new SpeechGrammarList();
     } else {
       console.error('speech rec not supported');
       setError('Speech recognition is not supported in your browser. Try Chrome instead.');
-      return;
     }
 
-    navigator.permissions.query({ name: 'microphone' }).then(function (permissionStatus) {
-      if (permissionStatus.state === 'denied') {
-        setError(
-          `Microphone permission denied. Can't censor without it :( To give access, click on the icon next to the website url in your browser and select 'allow' next to the microphone.`
-        );
-      }
-
-      permissionStatus.onchange = function () {
+    navigator.permissions
+      .query({ name: 'microphone' })
+      .then(function (permissionStatus) {
         if (permissionStatus.state === 'denied') {
           setError(
             `Microphone permission denied. Can't censor without it :( To give access, click on the icon next to the website url in your browser and select 'allow' next to the microphone.`
           );
         }
-        if (permissionStatus.state === 'granted') {
-          setError(null);
-        }
-      };
-    });
 
-    recognitionRef.current = new window.SpeechRecognition();
-    recognitionListRef.current = new window.SpeechGrammarList();
+        permissionStatus.onchange = function () {
+          if (permissionStatus.state === 'denied') {
+            setError(
+              `Microphone permission denied. Can't censor without it :( To give access, click on the icon next to the website url in your browser and select 'allow' next to the microphone.`
+            );
+          }
+          if (permissionStatus.state === 'granted') {
+            setError(null);
+          }
+        };
+      })
+      .catch((e) => {});
   }, []);
 
   useEffect(() => {
-    if (recognitionOn && recognitionRef.current) {
-      try {
+    if (recognitionRef.current) {
+      if (recognitionOn) {
         recognitionRef.current.start();
         console.log('Started rec.');
-      } catch (e) {}
-    } else {
-      recognitionRef.current.stop();
-      console.log('Stopped rec.');
+      } else {
+        recognitionRef.current.stop();
+        console.log('Stopped rec.');
+      }
     }
   }, [recognitionOn, recognitionRef.current]);
 
@@ -254,7 +255,18 @@ const Home = () => {
             </button>
           </div>
         ) : (
-          <div style={{ color: '#ff0000', fontSize: '0.7rem', width: '80%', textAlign: 'center' }}>{error}</div>
+          <div
+            style={{
+              color: '#ff0000',
+              fontSize: '0.7rem',
+              width: '80%',
+              height: '100%',
+              textAlign: 'center',
+              margin: '5vh',
+            }}
+          >
+            {error}
+          </div>
         )}
         {recognitionOn && (
           <div className='timer-container'>
@@ -325,6 +337,7 @@ const Home = () => {
         }
 
         main {
+          width: 100%;
           padding: 2rem 0;
           flex: 1;
           display: flex;
@@ -365,6 +378,7 @@ const Home = () => {
           justify-content: center;
           min-width: 50px;
           min-height: 30px;
+          margin-bottom: 1vh;
         }
 
         .title-space {
@@ -396,13 +410,13 @@ const Home = () => {
         }
 
         .description {
-          line-height: 1.5;
+          line-height: 1;
           font-size: 1.5rem;
+          margin: 0;
         }
 
         .sub-description {
           margin: 0;
-          margin-top: -20px;
           line-height: 1.3;
           font-size: 1rem;
         }
