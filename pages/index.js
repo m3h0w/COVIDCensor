@@ -18,6 +18,10 @@ const FORBIDDEN_STRINGS = [
   'infection',
   'infect',
   'flu',
+  'bat',
+  'cancelled',
+  'nineteen',
+  'covid',
 ];
 function beep() {
   var snd = new Audio(
@@ -96,6 +100,7 @@ const Home = () => {
         'symptoms',
         'infection',
         'infections',
+        ...FORBIDDEN_STRINGS,
       ];
       var grammar = '#JSGF V1.0; grammar colors; public <color> = ' + colors.join(' | ') + ' ;';
       recognitionListRef.current.addFromString(grammar, 1);
@@ -127,7 +132,6 @@ const Home = () => {
       <Head>
         <title>Evil Covid Censor</title>
         <meta name='description' content='Take a break and keep the pandemic out of the conversation. For a minute.' />
-        {/* <meta property="og:image" content="%PUBLIC_URL%/logo200.png" /> */}
         <meta
           property='og:description'
           content='Take a break and keep the pandemic out of the conversation. For a minute.'
