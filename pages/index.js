@@ -57,7 +57,7 @@ const Home = () => {
     const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
     window.SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 
-    if ('SpeechRecognition' in window) {
+    if (SpeechRecognition) {
       console.log('speech rec supported');
       recognitionRef.current = new SpeechRecognition();
       recognitionListRef.current = new SpeechGrammarList();
