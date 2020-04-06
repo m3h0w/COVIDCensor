@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import Typist from 'react-typist';
 import ReactTimer from '@xendora/react-timer';
 import TypistLoop from 'react-typist-loop';
+import GA from '../utils/googleAnalytics';
+import { useRouter } from 'next/router';
 
 const FORBIDDEN_STRINGS = [
   'corona',
@@ -33,8 +35,15 @@ const Home = () => {
   const recognitionListRef = useRef();
   const [detectedString, setDetectedString] = useState(' ');
   const [someInfo, setSomeInfo] = useState(null);
+  const [error, setError] = useState(undefined);
+  const router = useRouter();
 
   useEffect(() => {
+    GA.pageView();
+  }, [router.route]);
+
+  useEffect(() => {
+    GA.init();
     window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     window.SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
     window.SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
@@ -42,7 +51,8 @@ const Home = () => {
     if ('SpeechRecognition' in window) {
       console.log('speech rec supported');
     } else {
-      console.log('speech rec not supported');
+      console.error('speech rec not supported');
+      setError('Speech recognition is not supported in your browser. Try the newest Chrome.');
     }
     recognitionRef.current = new window.SpeechRecognition();
     recognitionListRef.current = new window.SpeechGrammarList();
@@ -180,16 +190,20 @@ const Home = () => {
 
         <p className='description'>Take a break and keep the pandemic out of the conversation. For a minute.</p>
 
-        <div className='grid'>
-          <button
-            className={`card${recognitionOn ? ' card-playing' : ''}`}
-            onClick={() => {
-              setRecognitionOn((prev) => !prev);
-            }}
-          >
-            <h3>{!recognitionOn ? `Censor ▶️` : `😈 Listening... ⏸`}</h3>
-          </button>
-        </div>
+        {!error ? (
+          <div className='grid'>
+            <button
+              className={`card${recognitionOn ? ' card-playing' : ''}`}
+              onClick={() => {
+                setRecognitionOn((prev) => !prev);
+              }}
+            >
+              <h3>{!recognitionOn ? `Censor ▶️` : `😈 Listening... ⏸`}</h3>
+            </button>
+          </div>
+        ) : (
+          <div style={{ color: '#ff0000' }}>{error}</div>
+        )}
         {recognitionOn && (
           <div className='timer-container'>
             <h1>
