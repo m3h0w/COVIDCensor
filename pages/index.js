@@ -144,23 +144,25 @@ const Home = () => {
             .map((v) => v.replace(' ', ''))
             .includes(forbiddenWord)
         ) {
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
           setDetectedString('');
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          beep();
+          setTimeout(() => {
+            beep();
+            beep();
+            beep();
+            beep();
+            beep();
+            beep();
+            beep();
+            beep();
+          }, 100);
         }
       });
     }
@@ -238,7 +240,7 @@ const Home = () => {
         </Typist>
 
         <p className='description'>Take a break and keep the pandemic out of the conversation. For a minute.</p>
-        {/* <p className='sub-description'>(This website makes sounds)</p> */}
+        <p className='sub-description'>(The censor will help you with a beep)</p>
 
         {!error ? (
           <div className='grid'>
