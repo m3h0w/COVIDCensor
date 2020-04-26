@@ -37,6 +37,7 @@ const BLACK = `#000000`;
 
 const Home = () => {
   const [recognitionOn, setRecognitionOn] = useState(false);
+  const [recognitionIntent, setRecognitionIntent] = useState(false);
   const recognitionRef = useRef();
   const recognitionListRef = useRef();
   const [detectedString, setDetectedString] = useState(' ');
@@ -91,26 +92,40 @@ const Home = () => {
 
   useEffect(() => {
     if (recognitionRef.current) {
-      if (recognitionOn) {
+      if (recognitionIntent) {
         recognitionRef.current.start();
-        console.log('Started rec.');
+        recognitionRef.current.onstart = function () {
+          console.log('Started rec.');
+        };
+        recognitionRef.current.onaudiostart = function () {
+          console.log('Started audio rec.');
+        };
+        recognitionRef.current.onspeechstart = function () {
+          console.log('Started speech rec');
+          setRecognitionOn(true);
+        };
+        recognitionRef.current.onspeechstop = function () {
+          recognitionRef.current.start();
+        };
       } else {
+        recognitionRef.current.onspeechstop = function () {
+          console.log('stopped speech');
+        };
         recognitionRef.current.stop();
         console.log('Stopped rec.');
+        setRecognitionOn(false);
       }
     }
-  }, [recognitionOn, recognitionRef.current]);
+  }, [recognitionIntent, recognitionRef.current]);
 
   useEffect(() => {
     if (recognitionRef.current) {
-      recognitionRef.current.interimResults = true;
+      recognitionRef.current.interimResults = false;
       recognitionRef.current.maxAlternatives = 3;
       recognitionRef.current.continuous = true;
-      recognitionRef.current.lang = 'en-US';
+      recognitionRef.current.lang = 'pl-PL';
       recognitionRef.current.onresult = (event) => {
-        for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
-          setDetectedString((prev) => `${prev} ${event.results[i][0].transcript}`);
-        }
+        setDetectedString(`${event.results[0][0].transcript}`);
       };
     }
   }, [recognitionRef.current]);
@@ -145,25 +160,10 @@ const Home = () => {
             .map((v) => v.replace(' ', ''))
             .includes(forbiddenWord)
         ) {
-          setDetectedString('');
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          beep();
-          setTimeout(() => {
-            beep();
-            beep();
-            beep();
-            beep();
-            beep();
-            beep();
-            beep();
-            beep();
-          }, 100);
+          // sayIt = false;
+          // setDetectedString('');
+          // var msg = new SpeechSynthesisUtterance(`Could you please avoid mentioning the ${forbiddenWord}`);
+          // window.speechSynthesis.speak(msg);
         }
       });
     }
@@ -241,14 +241,14 @@ const Home = () => {
         </Typist>
 
         <p className='description'>Take a break and keep the pandemic out of the conversation. For a minute.</p>
-        <p className='sub-description'>(The censor will help you with a beep)</p>
+        <p className='sub-description'>(The censor will help you with a reminder)</p>
 
         {!error ? (
           <div className='grid'>
             <button
               className={`card${recognitionOn ? ' card-playing' : ''}`}
               onClick={() => {
-                setRecognitionOn((prev) => !prev);
+                setRecognitionIntent((prev) => !prev);
               }}
             >
               <h3>{!recognitionOn ? `Censor ▶️` : `😈 Listening... ⏸`}</h3>
