@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@xendora/react-timer": "^1.1.0",
-    "next": "^9.3.3",
+    "next": "^11.1.3",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-ga": "^2.7.0",
